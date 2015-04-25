@@ -12,6 +12,14 @@ require('angular-animate');
 require('angular-sanitize');
 var $ = require('jquery');
 
+require('browsernizr/test/websockets');
+require('browsernizr/test/css/transforms');
+require('browsernizr/test/css/transforms3d');
+require('browsernizr/test/css/transitions');
+require('browsernizr/test/webgl');
+
+var Modernizr = require('browsernizr');
+
 var alAngularExampleTemplate = require('./app.html');
 
 angular.element(document).ready(function() {
@@ -36,7 +44,15 @@ angular.element(document).ready(function() {
 			template: alAngularExampleTemplate,
 			replace: true,
 			link: function(scope, elem, attrs) {
-				
+
+				var isMobile = !!(navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i));
+
+				if(isMobile) {
+
+				} else {
+
+				}
+
 			}
 		};
 	});
