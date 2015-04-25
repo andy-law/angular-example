@@ -1,0 +1,26 @@
+*, *:before, *:after {
+	box-sizing: border-box;
+}
+
+button { background: none; border: none; margin: 0; padding: 0; font: inherit; color: inherit; text-decoration: inherit; text-transform: inherit; width: auto; overflow: visible; cursor: pointer; -webkit-font-smoothing: antialiased; }
+button:disabled { cursor: default; }
+
+a { color: inherit; text-decoration: inherit; }
+
+th { text-align: left; }
+
+html, body {
+	height: 100%;
+	min-height: 100%;
+	font-family: "Helvetica Neue", "HelveticaNeue", "Helvetica", "Arial", sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+input, textarea {
+	font-family: "Helvetica Neue", "HelveticaNeue", "Helvetica", "Arial", sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+input { border: none; margin: 0; padding: 0; font: inherit; -webkit-font-smoothing: antialiased; }
+
+::selection { background-color: #00b5e3; color: white; }
