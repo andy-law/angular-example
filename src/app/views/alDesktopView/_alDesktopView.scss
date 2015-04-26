@@ -1,3 +1,5 @@
+@import "../../components/alDesktopInteractive/_alDesktopInteractive.scss";
+
 @if import-once('al-desktop-view') {
 	.al-desktop-view {
 		width: 800px;

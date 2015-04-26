@@ -7,10 +7,14 @@ var angular = require('angular');
 var alDesktopViewTemplate = require('./alDesktopView.html');
 
 var alPusherService = require('../../services/alPusherService');
+var alDesktopInteractive = require('../../components/alDesktopInteractive/alDesktopInteractive')
 
 var desktopView = angular.module('al.angularExample.views.alDesktopView', [
-	alPusherService.name
+	alPusherService.name,
+	alDesktopInteractive.name
 ]);
+
+desktopView.constant('NEW_BALL_REQUESTED', 'NEW_BALL_REQUESTED');
 
 desktopView.directive('alDesktopView', function(
 	$document
@@ -53,34 +57,46 @@ desktopView.controller('alDesktopViewCtrl', function(
 	PUSHER_CONNECTED,
 	PUSHER_CONNECTION_ERROR,
 	PUSHER_SEND_CODE,
-	PUSHER_CODE_MATCHED
+	PUSHER_CODE_MATCHED,
+	PUSHER_REQUEST_BALL_SEND,
+	NEW_BALL_REQUESTED
 	) {
 
 	var pusher = AlPusherService.getPusher();
 
-	pusher.channel.bind(PUSHER_CONNECTED, channelSubscriptionSuccess);
-	pusher.channel.bind(PUSHER_CONNECTION_ERROR, channelSubscriptionError);
+	pusher.channel.bind(PUSHER_CONNECTED, onChannelSubscriptionSuccess);
+	pusher.channel.bind(PUSHER_CONNECTION_ERROR, onChannelSubscriptionError);
 
-	pusher.channel.bind(PUSHER_SEND_CODE, function(data) {
+	pusher.channel.bind(PUSHER_SEND_CODE, onPusherCodeReceived);
+	pusher.channel.bind(PUSHER_CODE_MATCHED, onClientCodeMatched);
+	pusher.channel.bind(PUSHER_REQUEST_BALL_SEND, onBallSendRequested);
+
+	function onChannelSubscriptionSuccess(event) {
+		//TODO: Implement success
+	}
+
+	function onChannelSubscriptionError(event) {
+		//TODO: Implement error
+	}
+
+	function onPusherCodeReceived(data) {
 		if(data.code === $scope.connectionCode) {
 			$scope.$apply(function() {
 				$scope.connected = true;
 			});
 			AlPusherService.sendMessage(PUSHER_CODE_MATCHED, {});
 		}
-	});
-	pusher.channel.bind(PUSHER_CODE_MATCHED, clientCodeMatched);
-
-	function channelSubscriptionSuccess(event) {
-		//TODO: Implement success
 	}
 
-	function channelSubscriptionError(event) {
-		//TODO: Implement error
-	}
-
-	function clientCodeMatched(event) {
+	function onClientCodeMatched(event) {
 		//TODO: Implement client code matched
+	}
+
+	function onBallSendRequested(data) {
+		if(data.code !== $scope.connectionCode) {
+			return;
+		}
+		$scope.$broadcast(NEW_BALL_REQUESTED, data.params);
 	}
 
 });

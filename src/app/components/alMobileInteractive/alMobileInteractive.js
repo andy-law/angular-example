@@ -172,7 +172,7 @@ alMobileInteractive.directive('alMobileInteractive', function(
 						scope.$apply(function() {
 							reset();
 						});
-						scope.onSendBallRequested({data: {
+						scope.onSendBallRequested({$data: {
 							speed: speed,
 							direction: normalize(direction),
 							colour: {r: r, g: g, b: b},

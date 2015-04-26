@@ -62,7 +62,7 @@ mobileView.controller('alMobileViewCtrl', function(
 
 		pusher.channel.bind(PUSHER_CODE_MATCHED, function(event) {
 			deferred.resolve();
-			scope.connectionCode = connectionCode;
+			$scope.connectionCode = connectionCode;
 		});
 
 		AlPusherService.sendMessage(PUSHER_SEND_CODE, {code: connectionCode});
