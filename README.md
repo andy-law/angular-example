@@ -7,9 +7,9 @@ The working code can be seen [here](http://angular-example.andylaw.info)
 To get started with the app locally, clone and run `npm install`, to install all dependencies. Running `gulp watch` will then build the project and serve it up locally.
 
 ## Tasks to complete
-[ ] General code quality review
-[ ] Unit tests and E2E tests
-[ ] Full build task to minify code
-[ ] Number of styling fixes
-[ ] Implement loaders whilst waiting for connections via Pusher
-[ ] Tweaks and improvements to Three JS scene
+- [ ] General code quality review
+- [ ] Unit tests and E2E tests
+- [ ] Full build task to minify code
+- [ ] Number of styling fixes
+- [ ] Implement loaders whilst waiting for connections via Pusher
+- [ ] Tweaks and improvements to Three JS scene
