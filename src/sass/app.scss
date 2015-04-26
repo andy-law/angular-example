@@ -1,3 +1,10 @@
 @import "_reset.scss";
 @import "_normalize.scss";
 @import "_typography.scss";
+
+@import "../app/views/alDesktopView/_alDesktopView.scss";
+@import "../app/views/alMobileView/_alMobileView.scss";
+
+body {
+	background-color: #111;
+}

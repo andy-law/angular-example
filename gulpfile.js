@@ -34,18 +34,18 @@ function logError(error) {
 
 function compileSass(callback){
 	return gulp.src('./src/sass/app.scss')
-			.pipe(plumber({
-				errorHandler: callback
-			}))
-			.pipe(sourcemaps.init())
-			.pipe(sass())
-			.pipe(autoprefixer({
-				browsers: ['Chrome >= 27'],
-				cascade: false
-			}))
-			.pipe(sourcemaps.write())
-			.pipe(gulp.dest('./assets/css'))
-			.on('end', callback);
+		.pipe(plumber({
+			errorHandler: callback
+		}))
+		.pipe(sourcemaps.init())
+		.pipe(sass())
+		.pipe(autoprefixer({
+			browsers: ['Chrome >= 27'],
+			cascade: false
+		}))
+		.pipe(sourcemaps.write())
+		.pipe(gulp.dest('./assets/css'))
+		.on('end', callback);
 }
 
 gulp.task('sass', function(callback){
@@ -75,7 +75,7 @@ gulp.task('watch', ['serve'], function(){
 
 	watch('./src/**/*.js', function() {
 		logTask('JS task triggered');
-		browserify('./src/js/app.js')
+		browserify('./src/app/app.js')
 			.transform(stringify(['.html']))
 			.bundle()
 			.pipe(source('app.js'))
@@ -89,19 +89,6 @@ gulp.task('watch', ['serve'], function(){
 	], function(change) {
 		browserSync.reload(change.path);
 	});
+
+	browserSync.reload();
 });
-
-// Base64 encode images
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-var cssBase64 = require('gulp-css-base64');
-
-gulp.task('css64', ['sass'], function () {
-    return gulp.src('./assets/css/app.css')
-        .pipe(cssBase64({
-            baseDir: './src/',
-            extensionsAllowed: ['.gif', '.jpg', '.png']
-        }))
-        .pipe(gulp.dest('./assets/css'));
-});
-
-gulp.task('release', ['css64']);

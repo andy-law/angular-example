@@ -1,0 +1,11 @@
+@if import-once('al-desktop-view') {
+	.al-desktop-view {
+		width: 800px;
+		margin: 0 auto;
+	}
+
+	.al-desktop-view__code {
+		font-size: 2rem;
+		text-align: center;
+	}
+}

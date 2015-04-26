@@ -1,6 +1,10 @@
 @if import-once("typography") {
 
-
+	body {
+		color: #ddd;
+		font-family: "museo-slab";
+		line-height: 1.5rem;
+	}
 
 }
 

@@ -20,24 +20,57 @@ require('browsernizr/test/webgl');
 
 var Modernizr = require('browsernizr');
 
+var alDesktopView = require('./views/alDesktopView/alDesktopView');
+var alMobileView = require('./views/alMobileView/alMobileView');
+
 var alAngularExampleTemplate = require('./app.html');
 
 angular.element(document).ready(function() {
 
-	var app = angular.module(appName, [
+	var module = angular.module(appName, [
 		'ngRoute',
 		'ngAnimate',
 		'ngSanitize',
-		'ui.router'
+		'ui.router',
+
+		alDesktopView.name,
+		alMobileView.name
 	]);
 
-	app.run(function(
+	module.run(function(
 		$rootScope,
 		$state) {
 
 	});
 
-	app.directive('alAngularExample', function() {
+	module.config(function ($locationProvider, $stateProvider, $urlRouterProvider) {
+
+		// Defaults
+		$urlRouterProvider
+			.when('', '/')
+			.otherwise('/404');
+
+		$stateProvider
+			.state('mobile', {
+				url: '/mobile',
+				views: {
+					'main': { template: '<al:mobile-view></efn:mobile-view>' }
+				}
+			});
+
+		$stateProvider
+			.state('desktop', {
+				url: '/desktop',
+				views: {
+					'main': { template: '<al:desktop-view></efn:desktop-view>' }
+				}
+			});
+
+	});
+
+	module.directive('alAngularExample', function(
+		$state
+		) {
 		return {
 			restrict: 'E',
 			controller: 'alAngularExampleCtrl',
@@ -46,20 +79,21 @@ angular.element(document).ready(function() {
 			link: function(scope, elem, attrs) {
 
 				var isMobile = !!(navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i));
-
+				
 				if(isMobile) {
-
+					$state.go('mobile');
 				} else {
-
+					$state.go('desktop');
 				}
 
 			}
 		};
 	});
 
-	app.controller('alAngularExampleCtrl', function($scope) {
+	module.controller('alAngularExampleCtrl', function($scope) {
 
 	});
+
 
 	angular.bootstrap($('[data-app-name="al-angular-example"]'), [appName]);
 
