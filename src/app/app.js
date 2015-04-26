@@ -37,6 +37,12 @@ angular.element(document).ready(function() {
 		alMobileView.name
 	]);
 
+	module.constant('PUSHER_CONNECTED', 		'pusher:subscription_succeeded');
+	module.constant('PUSHER_CONNECTION_ERROR', 	'pusher:subscription_error');
+	module.constant('PUSHER_SEND_CODE',			'client-code-send');
+	module.constant('PUSHER_CODE_MATCHED',		'client-code-matched');
+	module.constant('PUSHER_REQUEST_BALL_SEND',	'client-send-ball');
+
 	module.run(function(
 		$rootScope,
 		$state) {
@@ -79,7 +85,7 @@ angular.element(document).ready(function() {
 			link: function(scope, elem, attrs) {
 
 				var isMobile = !!(navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i));
-				
+
 				if(isMobile) {
 					$state.go('mobile');
 				} else {

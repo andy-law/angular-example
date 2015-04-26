@@ -1,3 +1,6 @@
+@import "../../components/alMobileIntro/_alMobileIntro.scss";
+@import "../../components/alMobileInteractive/_alMobileInteractive.scss";
+
 @if import-once('al-mobile-view') {
 	.al-mobile-view {
 		width: 80%;
@@ -5,10 +8,4 @@
 		line-height: 2rem;
 	}
 
-	.circle {
-		border-radius: 50%;
-		width: 600px;
-		height: 600px;
-		position: absolute;
-	}
 }

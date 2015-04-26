@@ -1,0 +1,18 @@
+@if import-once('al-mobile-interactive') {
+
+	.al-mobile-interactive {
+
+	}
+
+	.al-mobile-interactive__title {
+
+	}
+
+	.al-mobile-interactive__circle {
+		border-radius: 50%;
+		width: 600px;
+		height: 600px;
+		position: absolute;
+	}
+
+}

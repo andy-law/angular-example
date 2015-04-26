@@ -6,7 +6,11 @@
 var angular = require('angular');
 var alDesktopViewTemplate = require('./alDesktopView.html');
 
-var desktopView = angular.module('al.angularExample.views.alDesktopView', []);
+var alPusherService = require('../../services/alPusherService');
+
+var desktopView = angular.module('al.angularExample.views.alDesktopView', [
+	alPusherService.name
+]);
 
 desktopView.directive('alDesktopView', function(
 	$document
@@ -44,8 +48,40 @@ desktopView.directive('alDesktopView', function(
 });
 
 desktopView.controller('alDesktopViewCtrl', function(
-	$scope
+	$scope,
+	AlPusherService,
+	PUSHER_CONNECTED,
+	PUSHER_CONNECTION_ERROR,
+	PUSHER_SEND_CODE,
+	PUSHER_CODE_MATCHED
 	) {
+
+	var pusher = AlPusherService.getPusher();
+
+	pusher.channel.bind(PUSHER_CONNECTED, channelSubscriptionSuccess);
+	pusher.channel.bind(PUSHER_CONNECTION_ERROR, channelSubscriptionError);
+
+	pusher.channel.bind(PUSHER_SEND_CODE, function(data) {
+		if(data.code === $scope.connectionCode) {
+			$scope.$apply(function() {
+				$scope.connected = true;
+			});
+			AlPusherService.sendMessage(PUSHER_CODE_MATCHED, {});
+		}
+	});
+	pusher.channel.bind(PUSHER_CODE_MATCHED, clientCodeMatched);
+
+	function channelSubscriptionSuccess(event) {
+		//TODO: Implement success
+	}
+
+	function channelSubscriptionError(event) {
+		//TODO: Implement error
+	}
+
+	function clientCodeMatched(event) {
+		//TODO: Implement client code matched
+	}
 
 });
 
