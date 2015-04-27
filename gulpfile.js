@@ -48,17 +48,26 @@ function compileSass(callback){
 		.on('end', callback);
 }
 
+gulp.task('_browserify', function() {
+	browserify('./src/app/app.js')
+		.transform(stringify(['.html']))
+		.bundle()
+		.pipe(source('app.js'))
+		.pipe(gulp.dest('./assets/js/'));
+});
+
 gulp.task('sass', function(callback){
 	compileSass(callback);
 });
 
-gulp.task('serve', ['sass'], function(){
+gulp.task('serve', ['_browserify', 'sass'], function(){
 	browserSync({
 		server: {
 			baseDir: '.'
 		}
 	});
 });
+
 
 gulp.task('watch', ['serve'], function(){
 
@@ -89,6 +98,4 @@ gulp.task('watch', ['serve'], function(){
 	], function(change) {
 		browserSync.reload(change.path);
 	});
-
-	browserSync.reload();
 });
