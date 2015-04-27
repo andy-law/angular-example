@@ -12,3 +12,4 @@ To get started with the app locally, clone and run `npm install`, to install all
 - [ ] Implement loaders whilst waiting for connections via Pusher
 - [ ] Tweaks and improvements to Three JS scene - add in items that can be hit, visible floor
 - [ ] Implement config panel for Three scene to control elements such as speed, gravity and lighting
+- [ ] Access phone accelerometer data to calculate initial pitch of ball
