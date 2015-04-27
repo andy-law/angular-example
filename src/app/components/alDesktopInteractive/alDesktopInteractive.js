@@ -9,6 +9,27 @@ var alDesktopInteractiveTemplate = require('./alDesktopInteractive.html');
 
 var alDesktopInteractive = angular.module('al.angularExample.components.alDesktopInteractive', []);
 
+/**
+ * @ngdoc directive
+ * @name al.angularExample.components.alDesktopInteractive:alDesktopInteractive
+ * @restrict E
+ * @scope
+ *
+ * @description
+ * Listen to 'NEW_BALL_REQUESTED' events requesting balls to be rendered to screen.
+ * Once event is received, render the ball into the Three JS scene according to params passed from mobile flick
+ *
+ * To do - add in a params panel to amend speed, gravity, lighting etc
+ *
+ * @example
+ * <doc:example module="al.angularExample.components.alDesktopInteractive.alDesktopInteractive">
+ 	<doc:source>
+ 		<div></div>
+ 		<style></style>
+ 		<script></script>
+ 	</doc:source>
+ </doc:example>
+ */
 alDesktopInteractive.directive('alDesktopInteractive', function(
 	$document,
 	NEW_BALL_REQUESTED
@@ -18,14 +39,11 @@ alDesktopInteractive.directive('alDesktopInteractive', function(
 		controller: 'alDesktopInteractiveCtrl',
 		template: alDesktopInteractiveTemplate,
 		replace: true,
-		scope: {
-
-		},
 		link: function(scope, elem, attrs, ctrl) {
 
 			var activeBalls = [];
 			var spareBalls = [];
-			var renderer = new THREE.WebGLRenderer({precision: 'highp', antialias: true, preserveDrawingBuffer: true});
+			var renderer = new THREE.WebGLRenderer({alpha: true, precision: 'highp', antialias: true, preserveDrawingBuffer: true});
 			renderer.setSize($document.width(), $document.height());
 			elem.append(renderer.domElement);
 			angular.element(renderer.domElement).css({
@@ -40,7 +58,7 @@ alDesktopInteractive.directive('alDesktopInteractive', function(
 			pointLight.lookAt(new THREE.Vector3());
 			lightContainer.add(pointLight);
 
-			var camera = new THREE.PerspectiveCamera( 45, $document.width() / $document.height(), 1, 25000 );
+			var camera = new THREE.PerspectiveCamera( 60, $document.width() / $document.height(), 1, 20000 );
 			camera.position.x = 0;
 			camera.position.y = 0;
 			camera.position.z = 80;
@@ -81,17 +99,23 @@ alDesktopInteractive.directive('alDesktopInteractive', function(
 
 			function recycleBallHandler(ball) {
 				var index = activeBalls.indexOf(ball);
+				scene.remove(ball.ball);
 				spareBalls.push(activeBalls.splice(index, 1)[0]);
 			}
 
+			/**
+			 * Function responsible for rendering the ball bouncing away from camera
+			 * @param ball
+			 * @param recycleBallHandler
+			 * @constructor
+			 */
 			function BouncingBall(ball, recycleBallHandler) {
-				this.RECYCLE_BALL = 'recycleBall';
 				this.ball = ball;
-				this.gravity = 2;
+				this.gravity = 1.3;
 				this.colour = new THREE.Color();
-				this.scaleVector = new THREE.Vector3();
 
 				this.init = function(params) {
+					console.log('params', params);
 					this.params = params;
 					this.ball.position.x = 0;
 					this.ball.position.y = 0;
@@ -102,10 +126,7 @@ alDesktopInteractive.directive('alDesktopInteractive', function(
 					this.ball.material.color = this.colour;
 					this.ball.material.ambient = this.colour;
 					this.currentY = this.params.direction.y;
-					this.scaleVector.x = this.params.scale;
-					this.scaleVector.y = this.params.scale;
-					this.scaleVector.z = this.params.scale;
-					this.ball.scale = this.scaleVector;
+					this.ball.scale.set( this.params.scale, this.params.scale, this.params.scale );
 				}
 
 				this.update = function() {
@@ -117,7 +138,7 @@ alDesktopInteractive.directive('alDesktopInteractive', function(
 						this.ball.position.y = -600 + (150 * this.params.scale);
 						this.currentY = this.currentY * -0.95;
 					}
-					if(this.ball.position.z < -25000) {
+					if(this.ball.position.z < -20000) {
 						recycleBallHandler(this);
 					}
 				}

@@ -11,6 +11,25 @@ var alMobileInteractive = angular.module('al.angularExample.components.alMobileI
 alMobileInteractive.constant('MOBILE_INTERACTIVE_STATE_SIZE', 'MOBILE_INTERACTIVE_STATE_SIZE');
 alMobileInteractive.constant('MOBILE_INTERACTIVE_STATE_THROW', 'MOBILE_INTERACTIVE_STATE_THROW');
 
+/**
+ * @ngdoc directive
+ * @name al.angularExample.components.alMobileInteractive:alMobileInteractive
+ * @restrict E
+ * @scope
+ *
+ * @description
+ * Touch screen to create a circle/ball, then throw/flick towards screen
+ * Once off screen, request parent view to send off ball message to connected clients
+ *
+ * @example
+ * <doc:example module="al.angularExample.components.alMobileInteractive.alMobileInteractive">
+ 	<doc:source>
+ 		<div></div>
+ 		<style></style>
+ 		<script></script>
+ 	</doc:source>
+ </doc:example>
+ */
 alMobileInteractive.directive('alMobileInteractive', function(
 	$document,
 	$timeout,
@@ -41,7 +60,10 @@ alMobileInteractive.directive('alMobileInteractive', function(
 
 			circle = elem.find('[data-role="circle"]');
 
-			function reset() {
+			/**
+			 * Set component to initial state, where we size the circle
+ 			 */
+			function init() {
 				scope.state = MOBILE_INTERACTIVE_STATE_SIZE;
 				scope.cta = 'Hold your finger down anywhere on the screen to create a ball';
 
@@ -50,8 +72,17 @@ alMobileInteractive.directive('alMobileInteractive', function(
 				$document.bind('touchend', _onSizeTouchEnd);
 			}
 
-			reset();
+			init();
 
+			/////////////////////////////////////////////////////////////////////////
+			// HANDLERS IN MOBILE_INTERACTIVE_STATE_SIZE STATE
+			/////////////////////////////////////////////////////////////////////////
+
+			/**
+			 * Get a random colour for a circle, and start the loop of sizing it
+			 * @param event
+			 * @private
+			 */
 			function _onSizeTouchstart(event) {
 				colour = getRandomColour();
 				size = elem.width();
@@ -62,6 +93,10 @@ alMobileInteractive.directive('alMobileInteractive', function(
 
 			}
 
+			/**
+			 * Loop through scaling the circle until state has been updated to the 'interactive' state, i.e. ready to flick at screen
+			 * @param _scale
+			 */
 			function scaleCircle(_scale) {
 				_scale += scaleStep;
 				if(_scale >= 1 || _scale <= 0) {
@@ -84,10 +119,21 @@ alMobileInteractive.directive('alMobileInteractive', function(
 				}
 			}
 
+			/**
+			 * Just prevent devault on touch move, so we don't scroll the page via touch
+			 * Todo: only really need one touchmove function, returning after preventdefault if we're not in state MOBILE_INTERACTIVE_STATE_THROW
+			 * @param event
+			 * @private
+			 */
 			function _onSizeTouchMove(event) {
 				event.preventDefault();
 			}
 
+			/**
+			 * We've scaled our circle, so get ready to throw/flick at screen. Unbind previous listeners and bind to new ones for touchstart, touchmove and touchend
+			 * @param event
+			 * @private
+			 */
 			function _onSizeTouchEnd(event) {
 				event.preventDefault();
 				scope.state = MOBILE_INTERACTIVE_STATE_THROW;
@@ -100,10 +146,18 @@ alMobileInteractive.directive('alMobileInteractive', function(
 				$document.bind('touchend', _onSwipeTouchEnd);
 			}
 
+			/////////////////////////////////////////////////////////////////////////
+			// HANDLERS IN MOBILE_INTERACTIVE_STATE_THROW STATE
+			/////////////////////////////////////////////////////////////////////////
+
+			/**
+			 * Touch start, get a time at which the interaction started, so we can calculate duration, along with start point so we can calculate distance travelled over that time
+			 * @param event
+			 * @private
+			 */
 			function _onSwipeTouchStart(event) {
 				swipeStartTime = Date.now();
 				var touches = event.originalEvent.changedTouches;
-				console.log('start', event);
 				swipeStartPoint = {
 					x: touches[0].pageX,
 					y: touches[0].pageY
@@ -113,6 +167,11 @@ alMobileInteractive.directive('alMobileInteractive', function(
 				swipeEndPoint.y = touches[0].pageY;
 			}
 
+			/**
+			 * Update the position of the circle, and update the endpoint as we don't get the relevant data in touchend event
+			 * @param event
+			 * @private
+			 */
 			function _onSwipeTouchMove(event) {
 				event.preventDefault();
 				var touches = event.originalEvent.changedTouches;
@@ -121,18 +180,24 @@ alMobileInteractive.directive('alMobileInteractive', function(
 				swipeEndPoint.y = touches[0].pageY;
 				var difference = {x: swipeEndPoint.x - swipeStartPoint.x, y: swipeEndPoint.y - swipeStartPoint.y};
 
-				console.log('difference', difference);
-				console.log('translate3d(' + difference.x + 'px, ' + difference.y + 'px, ' + 0 + ') scale(' + scale + ', ' + scale + ')');
-
 				circle.css({
 					'-webkit-transform': 'translate3d(' + difference.x + 'px, ' + difference.y + 'px, ' + 0 + ') scale(' + scale + ', ' + scale + ')',
 					'transform': 'translate3d(' + difference.x + 'px, ' + difference.y + 'px, ' + 0 + ') scale(' + scale + ', ' + scale + ')'
 				});
 			}
 
+			/**
+			 * On touch end, make sure we've actually moved the circle. If we have, calculate direction, speed and animate off screen
+			 * Once ball is off screen, tell parent to send off ball message with relevant data
+			 * @param event
+			 * @private
+			 */
 			function _onSwipeTouchEnd(event) {
-				var touches = event.changedTouches,
-					swipeDuration = Date.now() - swipeStartTime,
+				event.preventDefault();
+				if(swipeStartPoint.x == swipeEndPoint.x && swipeStartPoint.y === swipeEndPoint.y) {
+					return;
+				}
+				var swipeDuration = Date.now() - swipeStartTime,
 					distance,
 					direction,
 					x, y,
@@ -141,7 +206,6 @@ alMobileInteractive.directive('alMobileInteractive', function(
 					r = colourR/255,
 					g = colourG/255,
 					b = colourB/255;
-				event.preventDefault();
 
 				$document.unbind('touchstart', _onSwipeTouchStart);
 				$document.unbind('touchmove', _onSwipeTouchMove);
@@ -154,7 +218,7 @@ alMobileInteractive.directive('alMobileInteractive', function(
 				direction = normalize(direction);
 				distance = getDistance(swipeEndPoint, swipeStartPoint);
 				speed = distance / swipeDuration;
-				speed *= 10;
+				speed *= 40; //TODO: arbritrary value, should be set in the Three Scene, preferably via interactive controls
 				speed = speed < 1 ? 1 : speed;
 				direction.x *= speed;
 				direction.y *= speed;
@@ -168,9 +232,10 @@ alMobileInteractive.directive('alMobileInteractive', function(
 						'transform': 'translate3d(' + x + 'px, ' + y + 'px, ' + 0 + ') scale(' + scale + ', ' + scale + ')'
 					});
 					if(isCircleOffscreen(x, y)) {
+						// transition is complete, clear interval and reset component
 						clearInterval(animateInterval);
 						scope.$apply(function() {
-							reset();
+							init();
 						});
 						scope.onSendBallRequested({$data: {
 							speed: speed,
@@ -183,6 +248,11 @@ alMobileInteractive.directive('alMobileInteractive', function(
 
 			}
 
+			/**
+			 * Notmalize vector, for easier calculations
+			 * @param vec
+			 * @returns {{x: number, y: number}}
+			 */
 			function normalize(vec) {
 				var magnitude = Math.sqrt(vec.x * vec.x + vec.y * vec.y);
 				return {
@@ -192,21 +262,37 @@ alMobileInteractive.directive('alMobileInteractive', function(
 
 			}
 
+			/**
+			 * Check if circle if off screen yet
+			 * @param x
+			 * @param y
+			 * @returns {boolean}
+			 */
 			function isCircleOffscreen(x, y) {
-				var circleRadius = parseFloat(size * scale, 10) * .5;
-				var docWidth = $document.width();
-				var docHeight = $document.height();
+				var circleRadius = size; //TODO: Should be divided by 2, but occasionally seeing side of circle on screen
+				var docWidth = $document.outerWidth();
+				var docHeight = $document.outerHeight();
 				var x = x + (docWidth * .5);
 				var y = y + (docHeight * .5);
 				return (x + circleRadius < 0 || x - circleRadius > docWidth || y + circleRadius < 0 || y - circleRadius > docHeight);
 			}
 
+			/**
+			 * Get disance between two vectors
+			 * @param a
+			 * @param b
+			 * @returns {number}
+			 */
 			function getDistance(a, b) {
 				var dx = a.x - b.x;
 				var dy = a.y - b.y;
 				return Math.sqrt(dx * dx + dy * dy);
 			}
 
+			/**
+			 * Create a random rgb colour
+			 * @returns {string}
+			 */
 			function getRandomColour() {
 				colourR = Math.round(Math.random() * 255);
 				colourG = Math.round(Math.random() * 255);

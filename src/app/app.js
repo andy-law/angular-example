@@ -74,6 +74,31 @@ angular.element(document).ready(function() {
 
 	});
 
+	/**
+	 * @ngdoc directive
+	 * @name al.angularExample:alAngularExample
+	 * @restrict E
+	 * @scope
+	 *
+	 * @description
+	 * Main Application entry point
+	 *
+	 * Detects whether browser is mobile (Android or iOS). Almost certainly not the most robust way to do this, but for sake of example should be fine.
+	 * Once it is detected if it's a mobile browser or not, state is updated to either mobile or desktop and relevant view triggered
+	 *
+	 * @example
+	 * <doc:example module="al.angularExample.alAngularExample">
+	 	<doc:source>
+	 		<div>
+	 			<al-angular-example></al-angular-example>
+	 		</div>
+	 		<style>
+	 		</style>
+	 		<script>
+	 		</script>
+	 	</doc:source>
+	 </doc:example>
+	 */
 	module.directive('alAngularExample', function(
 		$state
 		) {
@@ -96,6 +121,14 @@ angular.element(document).ready(function() {
 		};
 	});
 
+	/**
+	 * @ngdoc object
+	 * @name al.angularExample:alAngularExampleCtrl
+	 * @function
+	 *
+	 * @description
+	 * Controller for alAngularExample
+	 */
 	module.controller('alAngularExampleCtrl', function($scope) {
 
 	});

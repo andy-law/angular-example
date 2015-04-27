@@ -21,7 +21,6 @@ alMobileIntro.directive('alMobileIntro', function() {
 		link: function(scope, elem, attrs, ctrl) {
 
 			scope.onSubmitClicked = function(event) {
-
 				if(!scope.connectionCode) {
 					return;
 				}

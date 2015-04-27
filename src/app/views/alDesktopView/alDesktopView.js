@@ -16,6 +16,24 @@ var desktopView = angular.module('al.angularExample.views.alDesktopView', [
 
 desktopView.constant('NEW_BALL_REQUESTED', 'NEW_BALL_REQUESTED');
 
+/**
+ * @ngdoc directive
+ * @name al.angularExample.views.alDesktopView:alDesktopView
+ * @restrict E
+ * @scope
+ *
+ * @description
+ * Main view for desktop. Create random(ish) connection code
+ *
+ * @example
+ * <doc:example module="al.angularExample.views.alDesktopView.alDesktopView">
+ 	<doc:source>
+ 		<div></div>
+ 		<style></style>
+ 		<script></script>
+ 	</doc:source>
+ </doc:example>
+ */
 desktopView.directive('alDesktopView', function(
 	$document
 	) {
@@ -51,6 +69,16 @@ desktopView.directive('alDesktopView', function(
 	}
 });
 
+/**
+ * @ngdoc object
+ * @name al.angularExample.views.al:alDesktopViewCtrl
+ * @function
+ *
+ * @description
+ * Controller for desktop view.
+ * Connect to pusher service.
+ * Listen to requests to send a ball into the Three scene
+ */
 desktopView.controller('alDesktopViewCtrl', function(
 	$scope,
 	AlPusherService,
@@ -68,7 +96,6 @@ desktopView.controller('alDesktopViewCtrl', function(
 	pusher.channel.bind(PUSHER_CONNECTION_ERROR, onChannelSubscriptionError);
 
 	pusher.channel.bind(PUSHER_SEND_CODE, onPusherCodeReceived);
-	pusher.channel.bind(PUSHER_CODE_MATCHED, onClientCodeMatched);
 	pusher.channel.bind(PUSHER_REQUEST_BALL_SEND, onBallSendRequested);
 
 	function onChannelSubscriptionSuccess(event) {
@@ -86,10 +113,6 @@ desktopView.controller('alDesktopViewCtrl', function(
 			});
 			AlPusherService.sendMessage(PUSHER_CODE_MATCHED, {});
 		}
-	}
-
-	function onClientCodeMatched(event) {
-		//TODO: Implement client code matched
 	}
 
 	function onBallSendRequested(data) {
