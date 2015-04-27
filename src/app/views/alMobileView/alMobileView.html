@@ -1,10 +1,14 @@
 <div class='al-mobile-view'>
-	<al:mobile-intro ng-if="!connected"
-		data-connection-error="connectionError"
+	<div class="al-mobile-view__loading" ng-if="!pusherConnected">
+		<p>Waiting for connection to server</p>
+		<p ng-if="$parent.pusherErrorMessage">{{ $parent.pusherErrorMessage }}</p>
+	</div>
+	<al:mobile-intro ng-if="pusherConnected && !clientConnected"
+		data-connection-error="$parent.connectionError"
 		data-on-code-send-requested="onCodeSendRequested($data)">
 	</al:mobile-intro>
 
-	<al:mobile-interactive ng-if="connected"
+	<al:mobile-interactive ng-if="pusherConnected && clientConnected"
 		data-on-send-ball-requested="onSendBallRequested($data)">
 	</al:mobile-interactive>
 </div>

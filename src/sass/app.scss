@@ -8,3 +8,32 @@
 body {
 	background-color: #111;
 }
+
+.al-angular-app {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.al-angular-app__header {
+	width: 80%;
+	max-width: 800px;
+	margin: 0 auto;
+	line-height: 1.2;
+	pointer-events: none;
+	font-size: 0.5rem;
+}
+
+@media (min-width: 768px) {
+	.al-angular-app__header {
+		font-size: 1rem;
+	}
+}

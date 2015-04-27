@@ -1,8 +1,8 @@
 <div class="al-mobile-intro">
-	<h1>Input your code below</h1>
-	<form>
+	<h2 class="al-mobile-intro__heading">Input your code below</h2>
+	<form class="al-mobile-intro__form">
 		<input class="codeInput" type="text" placeholder="code" ng-model="connectionCode"></input>
 		<button type="button" class="submitBtn" ng-click="onSubmitClicked($event)">Submit</button>
 	</form>
-	<p class='error'></p>
+	<p class='error' ng-if="connectionError">{{ connectionError }}</p>
 </div>

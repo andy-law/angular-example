@@ -1,0 +1,5 @@
+@if import-once('al-mobile-intro') {
+	.al-mobile-intro__heading {
+		pointer-events: none;
+	}
+}
