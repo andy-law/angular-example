@@ -82,7 +82,17 @@ gulp.task('watch', ['serve'], function(){
 		});
 	});
 
+	//TODO: Clean up js and html into single task
 	watch('./src/**/*.js', function() {
+		logTask('JS task triggered');
+		browserify('./src/app/app.js')
+			.transform(stringify(['.html']))
+			.bundle()
+			.pipe(source('app.js'))
+			.pipe(gulp.dest('./assets/js/'));
+	});
+
+	watch('./src/**/*.html', function() {
 		logTask('JS task triggered');
 		browserify('./src/app/app.js')
 			.transform(stringify(['.html']))
@@ -98,4 +108,11 @@ gulp.task('watch', ['serve'], function(){
 	], function(change) {
 		browserSync.reload(change.path);
 	});
+});
+
+gulp.task('ngdocs', [], function () {
+	var gulpDocs = require('gulp-ngdocs');
+	return gulp.src('./src/app/**/*.js')
+		.pipe(gulpDocs.process())
+		.pipe(gulp.dest('./docs'));
 });
